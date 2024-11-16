@@ -1,120 +1,129 @@
-import oom_kicad
-import oom_markdown
 import os
+import yaml
+import glob
 import copy
-import scad
+import jinja2    
 
-#process
-#  locations set in working_parts.ods 
-#  export to working_parts.csv
-#  put components on the right side of the board
-#  run this script
+folder_template = "templates"
+file_template_default = os.path.join(folder_template, "oomlout_template_part_default.md.j2")
+file_template_default_absolute = os.path.join(os.path.dirname(__file__), file_template_default)
 
 def main(**kwargs):
-    #place_parts(**kwargs)
-    #make_readme(**kwargs)
-    scad.make_scad(**kwargs)
     
+    folder = kwargs.get("folder", f"os.path.dirname(__file__)/parts")
+    folder = folder.replace("\\","/")
+    kwargs["folder_template"] = folder_template
+    kwargs["file_template"] = file_template_default_absolute
+    folder_template_absolute = os.path.join(os.path.dirname(__file__), folder_template)
+    kwargs["folder_template_absolute"] = folder_template_absolute
+    file_template_absolute = os.path.join(os.path.dirname(__file__), file_template_default)
+    kwargs["file_template_absolute"] = file_template_absolute
+    print(f"oomlout_oomp_utility_readme_generation for folder: {folder}")
+    create_readme_recursive(**kwargs)
     
-
-def make_readme(**kwargs):
-    os.system("generate_resolution.bat")
-    oom_markdown.generate_readme_project(**kwargs)
-    #oom_markdown.generate_readme_teardown(**kwargs)
-    
-def make_scad(**kwargs):
-    import opsc
-    import oobb 
-    import oobb_base
-
-    kwargs["save_type"] = "none"
-    #kwargs["save_type"] = "all"
-    kwargs["size"] = "oobb"
-    kwargs["type"] = "oomlout_bolt_tool_funnel"
-    kwargs["width"] = 3
-    kwargs["height"] = 5
-    kwargs["thickness"] = 6
-     # default sets
-    width = kwargs.get("width", 3)
-    height = kwargs.get("height", 5)
-    thickness = kwargs.get("thickness", 3)
-    size = kwargs.get("size", "oobb")
-    pos = kwargs.get("pos", [0, 0, 0])
-    # extra sets
-    holes = kwargs.get("holes", True)
-    both_holes = kwargs.get("both_holes", True)    
-    kwargs["pos"] = pos
-    
-        # get the default thing
-    thing = oobb_base.get_default_thing(**kwargs)
-    th = thing["components"]
-    kwargs.pop("size","")
-
-    th.append(oobb_base.get_comment("plate main","p"))
-    # add plate
-    p3 = copy.deepcopy(kwargs)
-    p3["type"] = "p"   
-    p3["shape"] = f"{size}_plate"
-    p3["width"] = width
-    p3["height"] = height  
-    p3["depth"] = thickness
-    p3["pos"] = pos
-    #p3["m"] = ""  
-    oobb_base.append_full(thing,**p3)      
-    #th.append(oobb_base.oobb_easy(**p3))
-    
-    # add holes
-    if holes:
-        th.append(oobb_base.get_comment("holes main","n"))
-        p3 = copy.deepcopy(kwargs)
-        p3["type"] = "n"
-        p3["shape"] = f"{size}_holes"
-        p3["width"] = width
-        p3["height"] = height
-        p3["pos"] = pos
-        p3["both_holes"] = both_holes
-        #p3["m"] = ""
-        oobb_base.append_full(thing,**p3)      
-        #th.extend(oobb_base.oobb_easy(**p3))   
-        
-        
-        save_type = kwargs.get("save_type", "all")
-        overwrite = True
-        modes = ["3dpr", "laser", "true"]
-        for mode in modes:
-            depth = thing.get(
-                "depth_mm", thing.get("thickness_mm", 3))
-            height = thing.get("height_mm", 100)
-            layers = depth / 3
-            tilediff = height + 10
-            start = 1.5
-            if layers != 1:
-                start = 1.5 - (layers / 2)*3
-            if "bunting" in thing:
-                start = 0.5
-            opsc.opsc_make_object(f'scad_output/{thing["id"]}/{mode}.scad', thing["components"], mode=mode, save_type=save_type, overwrite=overwrite, layers=layers, tilediff=tilediff, start=start)
-            
- 
-
-
-#take component positions from working_parts.csv and place them in working.kicad_pcb
-def place_parts(**kwargs):
-    board_file = "kicad/current_version/working/working.kicad_pcb"
-    parts_file = "working_parts.csv"
-    #load csv file
-    import csv
-    with open(parts_file, 'r') as f:
-        reader = csv.DictReader(f)
-        parts = [row for row in reader]
-
+def create_readme_recursive(**kwargs):
+    folder = kwargs.get("folder", os.path.dirname(__file__))
+    kwargs["folder"] = folder
+    folder_template_absolute = kwargs.get("folder_template_absolute", "")
+    kwargs["folder_template_absolute"] = folder_template_absolute
+    filter = kwargs.get("filter", "")
+    count = 0
+    for item in os.listdir(folder):
+        item_absolute = os.path.join(folder, item)
+        if filter in item:            
+            if os.path.isdir(item_absolute):
+                #if working.yaml exists in the folder
+                if os.path.exists(os.path.join(item_absolute, "working.yaml")):
+                    kwargs["directory"] = item_absolute
+                    manipulate_data(**kwargs)
+                    count += 1
+                    if count % 100 == 0:
+                        print(f"count: {count}")
 
     
-    oom_kicad.kicad_set_components(board_file=board_file, parts=parts, corel_pos=True, **kwargs)
+
+def manipulate_data(**kwargs):
+    import os
+    directory = kwargs.get("directory",os.getcwd())    
+    file_template = kwargs.get("file_template", file_template_default_absolute)
+    file_output = f"{directory}/readme.md"
+    details = {}
+
+    #      yaml part
+    file_yaml = f"{directory}/working.yaml"
+    details = {}
+    if os.path.exists(file_yaml):
+        with open(file_yaml, 'r') as stream:
+            try:
+                details = yaml.load(stream, Loader=yaml.FullLoader)
+            except yaml.YAMLError as exc:   
+                print(exc)
+    
+    
+    details["oomlout_oomp_utility_custom_data_manipulation"] = True
+
+    oomp_id = details.get("id", "")
+    md5_6_alpha = details.get("md5_6_alpha", "")
+
+    #print 3x2 label link
+    details["link_oomlout_label_3x2"] = f"http://192.168.1.245:1112/?label=oomp%20{md5_6_alpha}"
+    details["link_oomlout_label_2x1"] = f"http://192.168.1.242:1112/?label=oomp%20{md5_6_alpha}"
+    details["link_oomlout_label_6x4"] = f"http://192.168.1.55:1112/?label=oomp%20{md5_6_alpha}"
+
+    #add links in a list
+    links = ["link_main"]
+    links.append("github_link")
+
+    #add distributor links
+    distributors = ["orbital_fasteners"]
+    for distributor in distributors:
+        links.append(f"webpage_distributor_{distributor}")
+    
+    manufacturers = ["metalmate"]
+    for manufacturer in manufacturers:
+        links.append(f"webpage_manufacturer_{manufacturer}")
+
+    #add in an itemized list
+        count = 1
+    for link in links:
+        if link in details:
+            details[f"link_{count}"] = details[link]
+            details[f"link_{count}_name"] = link
+            count += 1
+    
+    #add a price summary
+    #go through distribtors and populate price_distributor_1, price_distributor_2, etc
+    qtys = [1, 100, 200, 1000, 10000]
+    count = 1
+    for distributor in distributors:        
+        for qty in qtys:
+            field_name = f"price_{qty}_distributor_{distributor}"
+            if field_name in details:
+                price = details[field_name]
+                if price != "":
+                    details[f"price_{qty}_distributor_{count}"] = price
+                    details[f"price_{qty}_name"] = distributor
+                    
 
 
+    #add manufacturer links
 
+    #save details to file
+                
+    print(f"saving details to file: {file_yaml}")
+    with open(file_yaml, 'w') as outfile:
+        yaml.dump(details, outfile, sort_keys=True)
 
+    pass
 
 
 if __name__ == '__main__':
-    main()
+    #folder is the path it was launched from
+    
+    kwargs = {}
+    folder = os.path.dirname(__file__)
+    folder = "Z:\\oomlout_oomp_current_version_fast_test\\parts"
+    #folder = "C:/gh/oomlout_oomp_builder/parts"
+    #folder = "C:/gh/oomlout_oomp_part_generation_version_1/parts"
+    kwargs["folder"] = folder
+    main(**kwargs)
