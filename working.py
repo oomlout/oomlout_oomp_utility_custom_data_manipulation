@@ -75,25 +75,41 @@ def manipulate_data(**kwargs):
     if True:
         links = ["link_main"]
         links.append("github_link")
-
+        links_buy = []
 
         #add distributor links    
         distributors = ["orbital_fasteners"]
         for distributor in distributors:
             links.append(f"webpage_distributor_{distributor}")
+            links_buy.append(f"webpage_distributor_{distributor}")
         
         manufacturers = ["metalmate"]
         for manufacturer in manufacturers:
             links.append(f"webpage_manufacturer_{manufacturer}")
 
         #add in an itemized list
-            count = 1
+        count = 1
         for link in links:
             if link in details:
                 details[f"link_{count}"] = details[link]
                 details[f"link_{count}_name"] = link
                 count += 1
-    
+
+        count = 1
+        for link in links_buy:
+            if link in details:
+                details[f"link_buy_{count}"] = details[link]
+                details[f"link_buy_{count}_name"] = link
+
+                count += 1    
+        
+        if "distributor_current" in details:
+            link = f"webpage_distributor_{details['distributor_current']}"
+            details["link_buy"] = details[link]
+            details["link_buy_name"] = link.replace("webpage_distributor_", "")
+
+        
+
     #add a price summary
     if True:
         #go through distribtors and populate price_distributor_1, price_distributor_2, etc
