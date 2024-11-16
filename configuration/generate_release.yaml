@@ -1,0 +1,32 @@
+repo:
+  - "https://github.com/oomlout/oomlout_bolt_packaging_tin_hinged_lid_version_1"
+  - "https://github.com/oomlout/oomlout_bolt_packaging_three_d_printed_version_3"
+  - "https://github.com/oomlout/oomlout_bolt_tool_funnel"
+file:
+  - repo: "oomlout_bolt_packaging_tin_hinged_lid_version_1"
+    source: "scad_output\\oobb_test_main_spacer_08_10_01_ex_width_start_129_height_start_169_depth_start_18\\3dpr.stl"
+    destination: "release\\three_d_printer_files\\hinged_tin_version\\tin_spacer_quantity_1.stl"
+  # 3 x 2.5 tray qty 2
+  - repo: "oomlout_bolt_packaging_three_d_printed_version_3"
+    source: "scad_output\\oobb_oomlout_bolt_packaging_three_d_printed_version_1_tray_03_2d5_18\\3dpr.stl"
+    destination: "release\\three_d_printer_files\\hinged_tin_version\\tray_3_width_2.5_height_18_mm_depth_quantity_2.stl"
+  # 5 x 2.5 tray qty 2
+  - repo: "oomlout_bolt_packaging_three_d_printed_version_3"
+    source: "scad_output\\oobb_oomlout_bolt_packaging_three_d_printed_version_1_tray_05_2d5_18\\3dpr.stl"
+    destination: "release\\three_d_printer_files\\hinged_tin_version\\tray_5_width_2.5_height_18_mm_depth_quantity_2.stl"
+  # 4 x 2.5 tray qty 4
+  - repo: "oomlout_bolt_packaging_three_d_printed_version_3"
+    source: "scad_output\\oobb_oomlout_bolt_packaging_three_d_printed_version_1_tray_04_2d5_18\\3dpr.stl"
+    destination: "release\\three_d_printer_files\\hinged_tin_version\\tray_4_width_2.5_height_18_mm_depth_quantity_4.stl"
+  # 3 x 2.5 funnel
+  - repo: "oomlout_bolt_tool_funnel"
+    source: "scad_output\\oobb_oomlout_bolt_tool_funnel_01_01_01_ex_oobb_funnel_3_width_2d5_height\\3dpr.stl"
+    destination: "release\\production_tool\\funnel_3_width_2.5_height.stl"
+  # 5 x 2.5 funnel
+  - repo: "oomlout_bolt_tool_funnel"
+    source: "scad_output\\oobb_oomlout_bolt_tool_funnel_01_01_01_ex_oobb_funnel_5_width_2d5_height\\3dpr.stl"
+    destination: "release\\production_tool\\funnel_5_width_2.5_height.stl"
+  # 4 x 2.5 funnel
+  - repo: "oomlout_bolt_tool_funnel"
+    source: "scad_output\\oobb_oomlout_bolt_tool_funnel_01_01_01_ex_oobb_funnel_4_width_2d5_height\\3dpr.stl"
+    destination: "release\\production_tool\\funnel_4_width_2.5_height.stl"

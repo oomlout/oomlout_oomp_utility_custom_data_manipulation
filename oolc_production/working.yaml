@@ -1,0 +1,6 @@
+project_id: oomlout_oomp_utility_custom_data_manipulation
+project_name: Oomlout Oomp Utility Custom Data Manipulation
+project_repo: https://github.com/oomlout/oomlout_oomp_utility_custom_data_manipulation
+production_format:
+  oolc_1:
+    file_location: source_files/oolc_1.cdr
