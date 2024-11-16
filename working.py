@@ -66,53 +66,56 @@ def manipulate_data(**kwargs):
     md5_6_alpha = details.get("md5_6_alpha", "")
 
     #print 3x2 label link
-    details["link_oomlout_label_3x2"] = f"http://192.168.1.245:1112/?label=oomp%20{md5_6_alpha}"
-    details["link_oomlout_label_2x1"] = f"http://192.168.1.242:1112/?label=oomp%20{md5_6_alpha}"
-    details["link_oomlout_label_6x4"] = f"http://192.168.1.55:1112/?label=oomp%20{md5_6_alpha}"
+    if True:
+        details["link_oomlout_label_3x2"] = f"http://192.168.1.245:1112/?label=oomp%20{md5_6_alpha}"
+        details["link_oomlout_label_2x1"] = f"http://192.168.1.242:1112/?label=oomp%20{md5_6_alpha}"
+        details["link_oomlout_label_6x4"] = f"http://192.168.1.55:1112/?label=oomp%20{md5_6_alpha}"
 
     #add links in a list
-    links = ["link_main"]
-    links.append("github_link")
+    if True:
+        links = ["link_main"]
+        links.append("github_link")
 
-    #add distributor links
-    distributors = ["orbital_fasteners"]
-    for distributor in distributors:
-        links.append(f"webpage_distributor_{distributor}")
-    
-    manufacturers = ["metalmate"]
-    for manufacturer in manufacturers:
-        links.append(f"webpage_manufacturer_{manufacturer}")
 
-    #add in an itemized list
-        count = 1
-    for link in links:
-        if link in details:
-            details[f"link_{count}"] = details[link]
-            details[f"link_{count}_name"] = link
-            count += 1
+        #add distributor links    
+        distributors = ["orbital_fasteners"]
+        for distributor in distributors:
+            links.append(f"webpage_distributor_{distributor}")
+        
+        manufacturers = ["metalmate"]
+        for manufacturer in manufacturers:
+            links.append(f"webpage_manufacturer_{manufacturer}")
+
+        #add in an itemized list
+            count = 1
+        for link in links:
+            if link in details:
+                details[f"link_{count}"] = details[link]
+                details[f"link_{count}_name"] = link
+                count += 1
     
     #add a price summary
-    #go through distribtors and populate price_distributor_1, price_distributor_2, etc
-    qtys = [1, 100, 200, 1000, 10000]
-    count = 1
-    for distributor in distributors:        
-        for qty in qtys:
-            field_name = f"price_{qty}_distributor_{distributor}"
-            if field_name in details:
-                price = details[field_name]
-                if price != "":
-                    details[f"price_{qty}_distributor_{count}"] = price
-                    details[f"price_{qty}_name"] = distributor
-                    
+    if True:
+        #go through distribtors and populate price_distributor_1, price_distributor_2, etc
+        qtys = [1, 100, 200, 1000, 10000]
+        count = 1
+        for distributor in distributors:        
+            for qty in qtys:
+                field_name = f"price_{qty}_distributor_{distributor}"
+                if field_name in details:
+                    price = details[field_name]
+                    if price != "":
+                        details[f"price_{qty}_distributor_{count}"] = price
+                        details[f"price_{qty}_name"] = distributor
+                        
 
 
-    #add manufacturer links
 
     #save details to file
-                
-    print(f"saving details to file: {file_yaml}")
-    with open(file_yaml, 'w') as outfile:
-        yaml.dump(details, outfile, sort_keys=True)
+    if True:                        
+        print(f"saving details to file: {file_yaml}")
+        with open(file_yaml, 'w') as outfile:
+            yaml.dump(details, outfile, sort_keys=True)
 
     pass
 
