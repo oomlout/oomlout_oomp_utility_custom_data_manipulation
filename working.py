@@ -122,7 +122,8 @@ def manipulate_data(**kwargs):
                     price = details[field_name]
                     if price != "":
                         details[f"price_{qty}_distributor_{count}"] = price
-                        details[f"price_{qty}_name"] = distributor
+            details[f"price_{count}_name"] = distributor
+            count += 1
                         
 
 
