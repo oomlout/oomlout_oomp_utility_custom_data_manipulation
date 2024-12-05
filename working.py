@@ -105,14 +105,18 @@ def manipulate_data(**kwargs):
     if True:
         links = ["link_main"]
         links.append("github_link")
+        links.append("distributor_amazon_link")        
         links_buy = []
 
         #add distributor links    
-        distributors = ["orbital_fasteners","accu"]
+        distributors = ["orbital_fasteners","accu","amazon"]
         for distributor in distributors:
             links.append(f"webpage_distributor_{distributor}")
             links_buy.append(f"webpage_distributor_{distributor}")
+            links.append(f"distributor_{distributor}_link")
         
+
+
         manufacturers = ["metalmate"]
         for manufacturer in manufacturers:
             links.append(f"webpage_manufacturer_{manufacturer}")
@@ -138,7 +142,8 @@ def manipulate_data(**kwargs):
             details["link_buy"] = details[link]
             details["link_buy_name"] = link.replace("webpage_distributor_", "")
 
-        
+        #go        
+
 
     #add a price summary
     if True:
@@ -198,7 +203,9 @@ def add_oomlout_detail_hierarchy(details):
                     test_strings.append(r'_mm_width')
                     test_strings.append(r'_mm_height')
                     test_strings.append(r'_mm_length')
+                    test_strings.append(r'_diameter')
                     test_strings.append(r'_mm_depth')
+                    test_strings.append(r'_gram')
                     for test_string in test_strings:
                         if test_string in test_detail:
                             #add a check for number before the string
