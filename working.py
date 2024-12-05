@@ -115,6 +115,7 @@ def manipulate_data(**kwargs):
             #links_buy.append(f"webpage_distributor_{distributor}")
             #links.append(f"distributor_{distributor}_link")
             links.append(f"link_distributor_{distributor}")
+            links_buy.append(f"link_distributor_{distributor}")
         
 
 
