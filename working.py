@@ -88,6 +88,9 @@ def manipulate_data(**kwargs):
             except yaml.YAMLError as exc:   
                 print(exc)
     
+    if details == None:
+        print(f"error with file: {file_yaml}")
+        return
     
     details["oomlout_oomp_utility_custom_data_manipulation"] = True
 
@@ -177,6 +180,7 @@ def add_link_label(details):
     md5_6_alpha = details.get("md5_6_alpha", "")
          
     details["link_oomlout_label_3x2"] = f"http://192.168.1.245:1112/?label=oomp%20{md5_6_alpha}"
+    details["link_oomlout_label_3x2_oomp_table"] = f"http://192.168.1.107:1112/?label=oomp%20{md5_6_alpha}"
     details["link_oomlout_label_2x1"] = f"http://192.168.1.242:1112/?label=oomp%20{md5_6_alpha}"
     details["link_oomlout_label_6x4"] = f"http://192.168.1.55:1112/?label=oomp%20{md5_6_alpha}"
 
