@@ -112,7 +112,7 @@ def manipulate_data(**kwargs):
         links_buy = []
 
         #add distributor links    
-        distributors = ["orbital_fasteners","accu","amazon"]
+        distributors = ["orbital_fasteners","accu","amazon", "aliexpress"]
         for distributor in distributors:
             #links.append(f"webpage_distributor_{distributor}")
             #links_buy.append(f"webpage_distributor_{distributor}")
