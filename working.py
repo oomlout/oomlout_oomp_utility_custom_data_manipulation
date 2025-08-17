@@ -22,7 +22,7 @@ def main(**kwargs):
     kwargs["folder_template_absolute"] = folder_template_absolute
     file_template_absolute = os.path.join(os.path.dirname(__file__), file_template_default)
     kwargs["file_template_absolute"] = file_template_absolute
-    print(f"oomlout_oomp_utility_readme_generation for folder: {folder}")
+    print(f"oomlout_oomp_utility_custom_data_manipulation_generation for folder: {folder}")
     create_recursive(**kwargs)
     
 def create_recursive(**kwargs):
@@ -202,6 +202,10 @@ def add_oomlout_detail_hierarchy(details):
     for detail in details_in_order:
         if detail in details:
             test_detail = details.get(detail, "")
+            #remove "the"
+            test_detail = test_detail.replace("the ", "").replace("The ", "").replace("THE ", "")
+            #underscore versions
+            test_detail = test_detail.replace("the_", "").replace("The_", "").replace("THE_", "")
             if test_detail != "":
                 if "github" not in hierarchy_list:
                     split_value = False
