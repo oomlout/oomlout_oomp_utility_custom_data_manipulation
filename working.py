@@ -27,7 +27,7 @@ def main(**kwargs):
     
 def create_recursive(**kwargs):
     folder = kwargs.get("folder", os.path.dirname(__file__))
-    kwargs["folder"] = folder
+    #kwargs["folder"] = folder
     folder_template_absolute = kwargs.get("folder_template_absolute", "")
     kwargs["folder_template_absolute"] = folder_template_absolute
     filter = kwargs.get("filter", "")
@@ -40,24 +40,29 @@ def create_recursive(**kwargs):
         #semaphore = threading.Semaphore(1)
         threads = []
 
-        def create_thread(**kwargs):
+        def create_thread(item, **kwargs):
             with semaphore:
-                create_recursive_thread(**kwargs)
+                create_recursive_thread(item, **kwargs)
+
         
         for item in os.listdir(folder):
             if filter == "" or filter in item:
-                kwargs["item"] = item
+                #kwargs["item"] = item
                 #thread = threading.Thread(target=create_thread, kwargs=copy.deepcopy(kwargs))
-                thread = threading.Thread(target=create_thread, kwargs=pickle.loads(pickle.dumps(kwargs, -1)))  
+                #thread = threading.Thread(target=create_thread, kwargs=pickle.loads(pickle.dumps(kwargs, -1)))  
+                #also send item without a kwargs copy use partial
+                import functools
+                partial_thread = functools.partial(create_thread, item=item, **kwargs)
+                thread = threading.Thread(target=partial_thread)
                 threads.append(thread)
                 thread.start()
             for thread in threads:
                 thread.join()
 
-def create_recursive_thread(**kwargs):   
+def create_recursive_thread(item, **kwargs):   
     global cnt_manip 
     folder = kwargs.get("folder", "")
-    item = kwargs.get("item", "")
+    #item = kwargs.get("item", "")
     filter = kwargs.get("filter", "")
     item_absolute = os.path.join(folder, item)
     if filter in item:            
